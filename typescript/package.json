@@ -13,7 +13,22 @@
     "agent": "tsx tool-calling-agent.ts",
     "agent:demo": "tsx tool-calling-agent.ts demo",
     "content": "tsx content-review-workflow.ts",
-    "content:batch": "tsx content-review-workflow.ts batch"
+    "content:batch": "tsx content-review-workflow.ts batch",
+    "test": "playwright test",
+    "test:basic": "playwright test --config=playwright.config.basic.ts --grep-invert '@requires-ollama|@requires-network'",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile": "playwright test specs/mobile-testing.spec.ts",
+    "test:web": "playwright test specs/web-automation.spec.ts --grep-invert '@requires-network'",
+    "test:api": "playwright test specs/langgraph-api.spec.ts",
+    "test:integration": "playwright test specs/langgraph-integration.spec.ts",
+    "test:e2e": "playwright test specs/e2e-scenarios.spec.ts --grep-invert '@requires-network'",
+    "test:report": "playwright show-report playwright-report",
+    "test:install": "playwright install --with-deps"
   },
   "keywords": [
     "langgraph",
@@ -28,6 +43,7 @@
     "@langchain/langgraph": "^0.2.28"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"

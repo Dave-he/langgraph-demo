@@ -94,18 +94,16 @@ def build_qa_workflow():
     return graph.compile()
 
 # 7. 运行工作流
-if __name__ == "__main__":
+def run_single_question(question: str):
+    """运行单个问题的工作流"""
     # 构建工作流实例
     qa_workflow = build_qa_workflow()
-
-    # 定义用户问题（可自定义修改）
-    user_question = "请详细解释 LangGraph 与 LangChain 的核心区别，以及 LangGraph 的核心优势"
-
+    
     # 传入初始状态，运行工作流
     result = qa_workflow.invoke({
-        "question": user_question
+        "question": question
     })
-
+    
     # 打印执行结果
     print("=" * 60)
     print(f"用户问题：{result['question']}")
@@ -115,3 +113,80 @@ if __name__ == "__main__":
         print(f"优化后回答：{result['optimized_answer']}")
     print(f"最终回答：{result['final_answer']}")
     print("=" * 60)
+    
+    return result
+
+# 8. 交互式问答模式
+def interactive_qa():
+    """交互式问答（支持历史记录和上下键切换）"""
+    import readline  # 提供历史记录和行编辑功能
+    import os
+    
+    # 配置历史记录文件
+    history_file = os.path.expanduser("~/.langgraph_qa_history")
+    
+    # 加载历史记录
+    try:
+        readline.read_history_file(history_file)
+    except FileNotFoundError:
+        pass  # 首次运行，历史文件不存在
+    
+    # 设置历史记录最大条数
+    readline.set_history_length(1000)
+    
+    print("=" * 60)
+    print("🤖 智能问答系统已启动！")
+    print("💡 提示：使用 ↑↓ 键浏览历史问题")
+    print("输入 'quit' 退出")
+    print("=" * 60)
+    
+    # 构建工作流实例
+    qa_workflow = build_qa_workflow()
+    
+    try:
+        while True:
+            try:
+                user_question = input("\n👤 你的问题: ").strip()
+            except EOFError:
+                # 处理 Ctrl+D
+                print("\n👋 再见！")
+                break
+            
+            if user_question.lower() in ['quit', 'exit', '退出']:
+                print("\n👋 再见！")
+                break
+            
+            if not user_question:
+                continue
+            
+            # 运行工作流
+            result = qa_workflow.invoke({
+                "question": user_question
+            })
+            
+            # 显示结果
+            print(f"\n💭 初步回答：{result['initial_answer']}")
+            print(f"✅ 质量检查：{'通过' if result['is_satisfactory'] else '需要优化'}")
+            
+            if not result["is_satisfactory"]:
+                print(f"🔄 优化后回答：{result['optimized_answer']}")
+            
+            print(f"\n🤖 最终回答：{result['final_answer']}")
+    
+    finally:
+        # 保存历史记录
+        try:
+            readline.write_history_file(history_file)
+        except Exception as e:
+            print(f"⚠️  保存历史记录失败：{e}")
+
+if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) > 1:
+        # 命令行参数模式
+        question = " ".join(sys.argv[1:])
+        run_single_question(question)
+    else:
+        # 交互模式
+        interactive_qa()

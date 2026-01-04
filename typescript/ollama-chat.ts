@@ -6,7 +6,7 @@ import { BaseMessage } from "@langchain/core/messages";
 // 2. 初始化本地 Ollama 模型（核心：指定你的本地地址和端口）
 const llm = new ChatOllama({
   model: "gemma3:12b", // 本地已拉取的 Ollama 模型名称（可替换为 qwen/mistral 等）
-  baseUrl: "http://localhost:11434", // 你的 Ollama 服务地址（使用 localhost 或 127.0.0.1）
+  baseUrl: "http://[240e:305:67ad:5b00:5680:9048:1114:513d]:11434", // 你的 Ollama 服务地址（使用 localhost 或 127.0.0.1）
   temperature: 0.3, // 温度系数，越低回答越严谨
   numCtx: 2048, // 上下文窗口大小，可根据模型支持调整
 });
